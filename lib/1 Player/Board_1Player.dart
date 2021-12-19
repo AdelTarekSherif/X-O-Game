@@ -152,6 +152,9 @@ class _BoardButtonState extends State<BoardButton> {
       } else if (currentMoves >= 9) {
         draw++;
         currentMoves = 0;
+        for(int i =0;i<9;i++){
+          winnerBackGround[i]=winnerColor;
+        }
       }
       _turnState.setState(() {
         if (currentMoves % 2 == 0)
