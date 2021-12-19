@@ -1,9 +1,33 @@
 import 'package:flutter/material.dart';
 
-import '../BoardButton.dart';
 import '../MainMenu.dart';
 import '../ScoreText.dart';
 
+
+int currentMoves = 0;
+List<String> boardState = ['', '', '', '', '', '', '', '', '']; //empty board
+String winner = '';
+int playerScore = 0;
+int botScore = 0;
+int draw = 0;
+var _gamePageState;
+var _turnState;
+var _context;
+String _turn = 'O';
+bool loading = false;
+bool vsBot = true;
+Color winnerColor = Color.fromRGBO(255, 183, 3, 1.0);
+List<Color>winnerBackGround = [
+  Color.fromRGBO(144, 224, 239, 1.0),
+  Color.fromRGBO(144, 224, 239, 1.0),
+  Color.fromRGBO(144, 224, 239, 1.0),
+  Color.fromRGBO(144, 224, 239, 1.0),
+  Color.fromRGBO(144, 224, 239, 1.0),
+  Color.fromRGBO(144, 224, 239, 1.0),
+  Color.fromRGBO(144, 224, 239, 1.0),
+  Color.fromRGBO(144, 224, 239, 1.0),
+  Color.fromRGBO(144, 224, 239, 1.0)
+];
 
 class Board_1Player extends StatefulWidget {
   static const String routeName = 'Board_1Player';
@@ -12,27 +36,18 @@ class Board_1Player extends StatefulWidget {
 }
 
 class _Board_1PlayerState extends State<Board_1Player> {
-  List<String>boardState = ['', '', '',
-    '', '', '',
-    '', '', ''];
-  int counter = 0;
-  int playerXScore=0;
-  int playerOScore=0;
-  String player1Name='';
-  String player2Name='';
-  String playerTurn='X';
-  Color winnerColor = Color.fromRGBO(
-      255, 183, 3, 1.0);
-  List<Color>winnerBackGround=[Color.fromRGBO(144, 224, 239, 1.0),
-    Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0),
-    Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0),
-    Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0)];
+  String player1Name = '';
   @override
   Widget build(BuildContext context) {
-    var args = (ModalRoute.of(context)?.settings.arguments) as BoardArgs;
-    player1Name= args.player1Name;
-    if(player1Name==''){player1Name='Player 1';}
-    if(player2Name==''){player2Name='Player 2';}
+    var args = (ModalRoute
+        .of(context)
+        ?.settings
+        .arguments) as BoardArgs;
+    player1Name = args.player1Name;
+    if (player1Name == '') {
+      player1Name = 'Player';
+    }
+    _gamePageState = this;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(202, 240, 248, 1.0),
@@ -42,230 +57,415 @@ class _Board_1PlayerState extends State<Board_1Player> {
         ),
       ),
       body: Container(
-        padding: EdgeInsets.all(10),
-        color:  Color.fromRGBO(202, 240, 248, 1.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(
-                color:  Color.fromRGBO(202, 240, 248, 1.0),
+          padding: EdgeInsets.all(10),
+          color: Color.fromRGBO(202, 240, 248, 1.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: Container(
+                  color: Color.fromRGBO(202, 240, 248, 1.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Score(player1Name, playerScore, 'O'),
+                      Score('Bot', botScore, 'X'),
+                      Score('Draw', draw, ''),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.all(25),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Score(player1Name,playerXScore,'X'),
-                    Score(player2Name,playerOScore,'O')
+                    Text("Player's turn: $_turn",style: TextStyle(
+                      fontSize: 22,
+                      color: Color.fromRGBO(2, 62, 138, 1.0),
+                      //fontWeight: FontWeight.bold
+                    ),)
                   ],
                 ),
               ),
-            ),
-            Container(
-              margin: EdgeInsets.all(25),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Player's turn: $playerTurn",style: TextStyle(
-                    fontSize: 22,
-                    color: Color.fromRGBO(2, 62, 138, 1.0),
-                    //fontWeight: FontWeight.bold
-                  ),)
-                ],
-              ),
-            ),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  BoardButton(boardState[0],0,onPlay,winnerBackGround[0]),
-                  BoardButton(boardState[1],1,onPlay,winnerBackGround[1]),
-                  BoardButton(boardState[2],2,onPlay,winnerBackGround[2])
-                ],
-              ),
-            ),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  BoardButton(boardState[3],3,onPlay,winnerBackGround[3]),
-                  BoardButton(boardState[4],4,onPlay,winnerBackGround[4]),
-                  BoardButton(boardState[5],5,onPlay,winnerBackGround[5])
-                ],
-              ),
-            ),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  BoardButton(boardState[6],6,onPlay,winnerBackGround[6]),
-                  BoardButton(boardState[7],7,onPlay,winnerBackGround[7]),
-                  BoardButton(boardState[8],8,onPlay,winnerBackGround[8])
-                ],
-              ),
-            ),
-            Row(
-              children: [
-                Expanded(child: Container(margin:EdgeInsets.only(left: 2,right: 2),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Color.fromRGBO(
-                            255, 183, 3, 1.0))
-                    ),
-                    onPressed: (){
-                      setState(() {
-                        resetBoard();
-                        if(playerTurn=='X')counter=0;
-                        else if(playerTurn=='O')counter=1;
-                      });
-                    },
-                    child: Text('Restart',style: TextStyle(
-                      color: Color.fromRGBO(2, 62, 138, 1.0),
-                    ),),
-                  ),
-                )
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    BoardButton(0),
+                    BoardButton(1),
+                    BoardButton(2),
+                  ],
                 ),
-                Expanded(
-                  child:  Container(margin: EdgeInsets.only(left: 2,right: 2),
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Color.fromRGBO(
-                              240, 113, 103, 1.0))
-                      ),
-                      onPressed: (){
-                        setState(() {
-                          resetBoard();
-                          playerXScore=0;
-                          playerOScore=0;
-                          counter=0;
-                          playerTurn='X';
-                        });
-                      },
-                      child: Text('Reset',
-                        style: TextStyle(
-                            color: Color.fromRGBO(2, 62, 138, 1.0),
-                            fontWeight: FontWeight.bold
-                        ),),
-                    ),
-                  ),
+              ),
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    BoardButton(3),
+                    BoardButton(4),
+                    BoardButton(5),
+                  ],
                 ),
-              ],
+              ),
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    BoardButton(6),
+                    BoardButton(7),
+                    BoardButton(8),
+                  ],
+                ),
+              ),
+              Status()
+            ],
+          )),
+    );
+  }
+}
+
+class BoardButton extends StatefulWidget {
+  final int index;
+
+  BoardButton(this.index);
+
+  @override
+  _BoardButtonState createState() => _BoardButtonState();
+}
+
+class _BoardButtonState extends State<BoardButton> {
+  void onPlay() {
+    _gamePageState.setState(() {
+      currentMoves++;
+      if (_checkGame()) {
+        for (int i = 0; i < 9; i++) {
+          if (boardState[i].isEmpty) {
+            boardState[i] = ' ';
+          }
+        }
+        if(winner=='O'||winner=='o'){
+          playerScore++;
+        }
+        else if(winner=='X'||winner=='x'){
+          botScore++;
+        }
+      } else if (currentMoves >= 9) {
+        draw++;
+        currentMoves = 0;
+      }
+      _turnState.setState(() {
+        if (currentMoves % 2 == 0)
+          _turn = 'O';
+        else
+          _turn = 'X';
+        _gamePageState.setState(() {});
+      });
+    });
+  }
+
+  @override
+  Widget build(context) {
+    return Expanded(
+      child: Container(
+        margin: EdgeInsets.only(left: 2, right: 2, bottom: 2),
+        child: ElevatedButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(
+                winnerBackGround[widget.index]),
+          ),
+          child: Text(
+            boardState[widget.index].toUpperCase(),
+            style: TextStyle(
+                fontSize: 45,
+                fontWeight: FontWeight.bold,
+                color: Colors.black
             ),
-            Row(
-              children: [
-                Expanded(child: Container(margin:EdgeInsets.only(left: 2,right: 2),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Color.fromRGBO(2, 62, 138, 1.0),)
-                    ),
-                    onPressed: (){
-                      setState(() {
-                        Navigator.pushNamed(context, MainMenu.routeName);
-                      });
-                    },
-                    child: Text('New Game',style: TextStyle(
-                      color:  Color.fromRGBO(248, 249, 250, 1.0),
-                    ),),
-                  ),
-                ),)
-              ],
-            )
-          ],
+          ),
+          onPressed: () {
+            if (boardState[widget.index] == '') {
+              if (!loading) {
+                loading = true;
+                boardState[widget.index] = 'o';
+                if (currentMoves >= 8) {} else
+                  _bestMove(boardState);
+              }
+              onPlay();
+            }
+          },
         ),
       ),
     );
   }
-  void onPlay(index) {
-    if(boardState[index].isNotEmpty) return ;
-    boardState[index]=counter%2==0?'X':'O';
-    counter++;
-    if(checkWinner('X')){
-      playerXScore+=1;
-      playerTurn='X';
-      counter=0;
-    }
-    else if (checkWinner('O')){
-      playerOScore+=1;
-      playerTurn='O';
-      counter=1;
-    }
-    else if(counter>=9){
-      counter=0;
-    }
-    setState(() {});
-  }
-  bool checkWinner(String playerCode){
-    int x=-1;
-    for(int i=0;i<9;i+=3){
-      if(boardState[i]==playerCode&&
-          boardState[i+1]==playerCode&&
-          boardState[i+2]==playerCode) {
-        winnerBackGround[i]=winnerColor;
-        winnerBackGround[i+1]=winnerColor;
-        winnerBackGround[i+2]=winnerColor;
-        x=1;
-      }
-    }
-    if (x==1){
-      for(int i=0;i<9;i++){
-        if(boardState[i].isEmpty)
-          boardState[i]=' ';
-      }
-      return true;
-    }
-    for(int i=0;i<3;i++){
-      if(boardState[i]==playerCode&&
-          boardState[i+3]==playerCode&&
-          boardState[i+6]==playerCode) {
-        winnerBackGround[i]=winnerColor;
-        winnerBackGround[i+3]=winnerColor;
-        winnerBackGround[i+6]=winnerColor;
-        x=1;
-      }
-    }
-    if (x==1){
-      for(int i=0;i<9;i++){
-        if(boardState[i].isEmpty)boardState[i]=' ';
-      }
-      return true;
-    }
-    if(boardState[0]==playerCode&&
-        boardState[4]==playerCode&&
-        boardState[8]==playerCode) {
-      winnerBackGround[0]=winnerColor;
-      winnerBackGround[4]=winnerColor;
-      winnerBackGround[8]=winnerColor;
-      x=1;
-    }
-    if (x==1){
-      for(int i=0;i<9;i++){
-        if(boardState[i].isEmpty)boardState[i]=' ';
-      }
-      return true;
-    }
-    if(boardState[2]==playerCode&&
-        boardState[4]==playerCode&&
-        boardState[6]==playerCode) {
-      winnerBackGround[2]=winnerColor;
-      winnerBackGround[4]=winnerColor;
-      winnerBackGround[6]=winnerColor;
-      x=1;
-    }
-    if (x==1){
-      for(int i=0;i<9;i++){
-        if(boardState[i].isEmpty)boardState[i]=' ';
-      }
-      return true;
-    }
-    return false;
-  }
-  void resetBoard(){
-    boardState = ['', '', '', '', '', '', '', '', ''];
-    winnerBackGround=[Color.fromRGBO(144, 224, 239, 1.0),
-      Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0),
-      Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0),
-      Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0)];
+}
 
+class Status extends StatefulWidget {
+  @override
+  _StatusState createState() => _StatusState();
+}
+
+class _StatusState extends State<Status> {
+  @override
+  Widget build(BuildContext context) {
+    _turnState = this;
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+                child: Container(margin: EdgeInsets.only(left: 2, right: 2),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                            Color.fromRGBO(
+                                255, 183, 3, 1.0))
+                    ),
+                    onPressed: () {
+                      _gamePageState.setState(() {
+                        _restartGame();
+                      });
+                    },
+                    child: Text('Restart', style: TextStyle(
+                      color: Color.fromRGBO(2, 62, 138, 1.0),
+                    ),),
+                  ),
+                )
+            ),
+            Expanded(
+              child: Container(margin: EdgeInsets.only(left: 2, right: 2),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Color.fromRGBO(
+                          240, 113, 103, 1.0))
+                  ),
+                  onPressed: () {
+                    _gamePageState.setState(() {
+                      _resetGame();
+                    });
+                  },
+                  child: Text('Reset',
+                    style: TextStyle(
+                        color: Color.fromRGBO(2, 62, 138, 1.0),
+                        fontWeight: FontWeight.bold
+                    ),),
+                ),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: Container(margin: EdgeInsets.only(left: 2, right: 2),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                        Color.fromRGBO(2, 62, 138, 1.0),)
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      Navigator.pushNamed(context, MainMenu.routeName);
+                    });
+                  },
+                  child: Text('New Game', style: TextStyle(
+                    color: Color.fromRGBO(248, 249, 250, 1.0),
+                  ),),
+                ),
+              ),)
+          ],
+        )
+      ],
+    );
   }
 }
-class BoardArgs{
+//-------------------------------------TicTacToe game fns ---------------------------
+
+bool _checkGame() {
+  for (int i = 0; i < 9; i += 3) {
+    if (boardState[i] != '' &&
+        boardState[i] == boardState[i + 1] &&
+        boardState[i + 1] == boardState[i + 2]) {
+      winner = boardState[i];
+      winnerBackGround[i] = winnerColor;
+      winnerBackGround[i + 1] = winnerColor;
+      winnerBackGround[i + 2] = winnerColor;
+      return true;
+    }
+  }
+  for (int i = 0; i < 3; i++) {
+    if (boardState[i] != '' &&
+        boardState[i] == boardState[i + 3] &&
+        boardState[i + 3] == boardState[i + 6]) {
+      winner = boardState[i];
+      winnerBackGround[i] = winnerColor;
+      winnerBackGround[i + 3] = winnerColor;
+      winnerBackGround[i + 6] = winnerColor;
+      return true;
+    }
+  }
+  if (boardState[0] != '' && boardState[0] == boardState[4] &&
+      boardState[4] == boardState[8]) {
+    winner = boardState[4];
+    winnerBackGround[0] = winnerColor;
+    winnerBackGround[4] = winnerColor;
+    winnerBackGround[8] = winnerColor;
+    return true;
+  }
+  if (boardState[2] != '' && boardState[2] == boardState[4] &&
+      boardState[4] == boardState[6]) {
+    winner = boardState[4];
+    winnerBackGround[2] = winnerColor;
+    winnerBackGround[4] = winnerColor;
+    winnerBackGround[6] = winnerColor;
+    return true;
+  }
+  return false;
+}
+
+void _restartGame() {
+  currentMoves = 0;
+  boardState = ['', '', '', '', '', '', '', '', ''];
+  _turn = 'O';
+  loading = false;
+  winnerBackGround = [
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0)
+  ];
+}
+
+void _resetGame() {
+  currentMoves = 0;
+  boardState = ['', '', '', '', '', '', '', '', ''];
+  _turn = 'O';
+  loading = false;
+  playerScore = 0;
+  botScore = 0;
+  draw = 0;
+  winner='';
+  winnerBackGround = [
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0),
+    Color.fromRGBO(144, 224, 239, 1.0)
+  ];
+}
+
+//------------------------------ MIN-MAX ------------------------------------------
+
+int max(int a, int b) {
+  return a > b ? a : b;
+}
+
+int min(int a, int b) {
+  return a < b ? a : b;
+}
+
+String player = 'x',
+    opponent = 'o';
+
+bool isMovesLeft(List<String> _board) {
+  int i;
+  for (i = 0; i < 9; i++) {
+    if (_board[i] == '') return true;
+  }
+  return false;
+}
+
+int _eval(List<String> _board) {
+  for (int i = 0; i < 9; i += 3) {
+    if (_board[i] != '' &&
+        _board[i] == _board[i + 1] &&
+        _board[i + 1] == _board[i + 2]) {
+      winner = _board[i];
+      return (winner == player) ? 10 : -10;
+    }
+  }
+  for (int i = 0; i < 3; i++) {
+    if (_board[i] != '' &&
+        _board[i] == _board[i + 3] &&
+        _board[i + 3] == _board[i + 6]) {
+      winner = _board[i];
+      return (winner == player) ? 10 : -10;
+    }
+  }
+  if (_board[0] != '' && (_board[0] == _board[4] && _board[4] == _board[8]) ||
+      (_board[2] != '' && _board[2] == _board[4] && _board[4] == _board[6])) {
+    winner = _board[4];
+    return (winner == player) ? 10 : -10;
+  }
+  return 0;
+}
+
+int minmax(List<String> _board, int depth, bool isMax) {
+  int score = _eval(_board);
+  int best = 0,
+      i;
+
+  if (score == 10 || score == -10) return score;
+  if (!isMovesLeft(_board)) return 0;
+  if (isMax) {
+    best = -1000;
+    for (i = 0; i < 9; i++) {
+      if (_board[i] == '') {
+        _board[i] = player;
+        best = max(best, minmax(_board, depth + 1, !isMax));
+        _board[i] = '';
+      }
+    }
+    return best;
+  } else {
+    best = 1000;
+    for (i = 0; i < 9; i++) {
+      if (_board[i] == '') {
+        _board[i] = opponent;
+        best = min(best, minmax(_board, depth + 1, !isMax));
+        _board[i] = '';
+      }
+    }
+    return best;
+  }
+}
+
+int _bestMove(List<String> _board) {
+  int bestMove = -1000,
+      moveVal;
+  int i,
+      bi = 0;
+  for (i = 0; i < 9; i++) {
+    if (_board[i] == '') {
+      moveVal = -1000;
+      _board[i] = player;
+      moveVal = minmax(_board, 0, false);
+      _board[i] = '';
+      if (moveVal > bestMove) {
+        bestMove = moveVal;
+        bi = i;
+      }
+    }
+  }
+  _board[bi] = player;
+  _gamePageState.setState(() {});
+  loading = false;
+  _turnState.setState(() {
+    _turn = 'X';
+    currentMoves++;
+  });
+  return bestMove;
+}
+
+class BoardArgs {
   String player1Name;
+
   BoardArgs({required this.player1Name});
 }

@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         Home_1Player.routeName:(myContext)=>Home_1Player(),
         Board_1Player.routeName:(myContext)=>Board_1Player(),
         Board_2Players.routeName:(myContext)=>Board_2Players(),
-        Home_2Players.routeName:(myContext)=>Home_2Players()
+        Home_2Players.routeName:(myContext)=>Home_2Players(),
       },
       initialRoute: MainMenu.routeName,
     );

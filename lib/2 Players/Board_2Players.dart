@@ -18,6 +18,7 @@ class _Board_2PlayersState extends State<Board_2Players> {
   int counter = 0;
   int playerXScore=0;
   int playerOScore=0;
+  int draw=0;
   String player1Name='';
   String player2Name='';
   String playerTurn='X';
@@ -54,7 +55,8 @@ class _Board_2PlayersState extends State<Board_2Players> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Score(player1Name,playerXScore,'X'),
-                    Score(player2Name,playerOScore,'O')
+                    Score(player2Name,playerOScore,'O'),
+                    Score('Draw',draw,''),
                   ],
                 ),
               ),
@@ -135,6 +137,7 @@ class _Board_2PlayersState extends State<Board_2Players> {
                           resetBoard();
                           playerXScore=0;
                           playerOScore=0;
+                          draw=0;
                           counter=0;
                           playerTurn='X';
                         });
@@ -176,6 +179,12 @@ class _Board_2PlayersState extends State<Board_2Players> {
   void onPlay(index) {
     if(boardState[index].isNotEmpty) return ;
     boardState[index]=counter%2==0?'X':'O';
+    setState(() {
+      if (counter % 2 == 0)
+        playerTurn = 'O';
+      else
+        playerTurn = 'X';
+    });
     counter++;
     if(checkWinner('X')){
       playerXScore+=1;
@@ -189,6 +198,10 @@ class _Board_2PlayersState extends State<Board_2Players> {
     }
     else if(counter>=9){
       counter=0;
+      draw++;
+      for(int i =0;i<9;i++){
+        winnerBackGround[i]=winnerColor;
+      }
     }
     setState(() {});
   }

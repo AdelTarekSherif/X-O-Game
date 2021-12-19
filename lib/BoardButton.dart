@@ -19,7 +19,6 @@ class BoardButton extends  StatelessWidget {
             fontSize: 50,
             color: Colors.black
         ),),
-
       ),
     ));
   }
