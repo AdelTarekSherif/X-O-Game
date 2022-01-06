@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../BoardButton.dart';
+import 'BoardButton.dart';
 import '../MainMenu.dart';
 import '../ScoreText.dart';
 
@@ -31,7 +31,7 @@ class _Board_2PlayersState extends State<Board_2Players> {
     Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0)];
   @override
   Widget build(BuildContext context) {
-    var args = (ModalRoute.of(context)?.settings.arguments) as BoardArgs;
+    var args = (ModalRoute.of(context)?.settings.arguments) as BoardArgs2Players;
     player1Name= args.player1Name;
     player2Name= args.player2Name;
     if(player1Name==''){player1Name='Player 1';}
@@ -264,8 +264,8 @@ class _Board_2PlayersState extends State<Board_2Players> {
       Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0)];
   }
 }
-class BoardArgs{
+class BoardArgs2Players{
   String player1Name;
   String player2Name;
-  BoardArgs({required this.player1Name,required this.player2Name});
+  BoardArgs2Players({required this.player1Name,required this.player2Name});
 }

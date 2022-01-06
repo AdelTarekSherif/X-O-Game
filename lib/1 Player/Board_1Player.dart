@@ -457,5 +457,5 @@ int _bestMove(List<String> _board) {
 
 class BoardArgs {
   String player1Name;
-  BoardArgs({required this.player1Name});
+  BoardArgs({required this.player1Name, player2Name});
 }
