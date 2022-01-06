@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../BoardButton.dart';
@@ -36,14 +37,8 @@ class _Board_2PlayersState extends State<Board_2Players> {
     if(player1Name==''){player1Name='Player 1';}
     if(player2Name==''){player2Name='Player 2';}
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color.fromRGBO(202, 240, 248, 1.0),
-        elevation: 0,
-        iconTheme: IconThemeData(
-          color: Color.fromRGBO(2, 62, 138, 1.0),
-        ),
-      ),
       body: Container(
+        margin: EdgeInsets.only(top: 25),
         padding: EdgeInsets.all(10),
         color:  Color.fromRGBO(202, 240, 248, 1.0),
         child: Column(
@@ -54,9 +49,9 @@ class _Board_2PlayersState extends State<Board_2Players> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Score(player1Name,playerXScore,'X'),
-                    Score(player2Name,playerOScore,'O'),
-                    Score('Draw',draw,''),
+                    Expanded(flex:2,child: Score(player1Name,playerXScore,'X')),
+                     Expanded(flex:2,child: Score(player2Name,playerOScore,'O')),
+                     Expanded(flex:1,child: Score('Draw',draw,'')),
                   ],
                 ),
               ),
@@ -66,7 +61,7 @@ class _Board_2PlayersState extends State<Board_2Players> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Player's turn: $playerTurn",style: TextStyle(
+                  Text("Player's turn: $playerTurn",overflow: TextOverflow.ellipsis,style: TextStyle(
                     fontSize: 22,
                     color: Color.fromRGBO(2, 62, 138, 1.0),
                     //fontWeight: FontWeight.bold
@@ -161,7 +156,7 @@ class _Board_2PlayersState extends State<Board_2Players> {
                     ),
                     onPressed: (){
                       setState(() {
-                        Navigator.pushNamed(context, MainMenu.routeName);
+                        Navigator.pushReplacementNamed(context, MainMenu.routeName);
                       });
                     },
                     child: Text('New Game',style: TextStyle(
@@ -179,6 +174,7 @@ class _Board_2PlayersState extends State<Board_2Players> {
   void onPlay(index) {
     if(boardState[index].isNotEmpty) return ;
     boardState[index]=counter%2==0?'X':'O';
+    print(counter);
     setState(() {
       if (counter % 2 == 0)
         playerTurn = 'O';
@@ -196,11 +192,18 @@ class _Board_2PlayersState extends State<Board_2Players> {
       playerTurn='O';
       counter=1;
     }
-    else if(counter>=9){
-      counter=0;
-      draw++;
+   else {
+     int x=0;
       for(int i =0;i<9;i++){
-        winnerBackGround[i]=winnerColor;
+        if(boardState[i].isNotEmpty){
+          x++;
+        }
+      }
+      if(x==9){
+        draw++;
+        for(int i =0;i<9;i++){
+          winnerBackGround[i]=winnerColor;
+        }
       }
     }
     setState(() {});
@@ -217,13 +220,6 @@ class _Board_2PlayersState extends State<Board_2Players> {
         x=1;
       }
     }
-    if (x==1){
-      for(int i=0;i<9;i++){
-        if(boardState[i].isEmpty)
-          boardState[i]=' ';
-      }
-      return true;
-    }
     for(int i=0;i<3;i++){
       if(boardState[i]==playerCode&&
           boardState[i+3]==playerCode&&
@@ -234,12 +230,6 @@ class _Board_2PlayersState extends State<Board_2Players> {
         x=1;
       }
     }
-    if (x==1){
-      for(int i=0;i<9;i++){
-        if(boardState[i].isEmpty)boardState[i]=' ';
-      }
-      return true;
-    }
     if(boardState[0]==playerCode&&
         boardState[4]==playerCode&&
         boardState[8]==playerCode) {
@@ -247,12 +237,6 @@ class _Board_2PlayersState extends State<Board_2Players> {
       winnerBackGround[4]=winnerColor;
       winnerBackGround[8]=winnerColor;
       x=1;
-    }
-    if (x==1){
-      for(int i=0;i<9;i++){
-        if(boardState[i].isEmpty)boardState[i]=' ';
-      }
-      return true;
     }
     if(boardState[2]==playerCode&&
         boardState[4]==playerCode&&
@@ -271,7 +255,9 @@ class _Board_2PlayersState extends State<Board_2Players> {
     return false;
   }
   void resetBoard(){
-    boardState = ['', '', '', '', '', '', '', '', ''];
+    boardState = ['', '', '',
+      '', '', '',
+      '', '', ''];
     winnerBackGround=[Color.fromRGBO(144, 224, 239, 1.0),
       Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0),
       Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0),Color.fromRGBO(144, 224, 239, 1.0),

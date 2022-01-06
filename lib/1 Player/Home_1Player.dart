@@ -46,7 +46,7 @@ class Home_1Player extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(25.0),
                         child: MaterialButton(onPressed: (){
-                         Navigator.pushNamed(context,Board_1Player.routeName,arguments: BoardArgs(player1Name: player1Name));
+                         Navigator.pushReplacementNamed(context,Board_1Player.routeName,arguments: BoardArgs(player1Name: player1Name));
                         },
                             child: Text('Start Game',style: TextStyle(
                               color: Color.fromRGBO(248, 249, 250, 1.0),

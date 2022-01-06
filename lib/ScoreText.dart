@@ -14,25 +14,29 @@ class Score extends  StatelessWidget {
             children: [
               Column(
                 children: [
-                  playerName!='Draw'?
-                  Text('$playerName ($code)',style: TextStyle(
-                      fontSize: 24,
-                      color: Color.fromRGBO(2, 62, 138, 1.0),
-                      fontWeight: FontWeight.bold
-                  ),): Text('$playerName',style: TextStyle(
-                      fontSize: 24,
-                      color: Color.fromRGBO(2, 62, 138, 1.0),
-                      fontWeight: FontWeight.bold
-                  ),)
+
+                  Container(
+                    child: Text('$playerName ',overflow: TextOverflow.ellipsis,style: TextStyle(
+                        fontSize: 24,
+                        color: Color.fromRGBO(2, 62, 138, 1.0),
+                        fontWeight: FontWeight.bold
+                    ),),
+                  )
                 ],
               ),
               Column(
                 children: [
-                  Text('$playerScore',style: TextStyle(
+                  playerName!='Draw'?
+                  Text('($code) $playerScore',overflow: TextOverflow.ellipsis,maxLines: 1,style: TextStyle(
                       fontSize: 24,
                       color: Color.fromRGBO(2, 62, 138, 1.0),
                       fontWeight: FontWeight.bold
-                  ),),
+                  ),):
+                  Text('$playerScore',overflow: TextOverflow.ellipsis,maxLines: 1,style: TextStyle(
+                      fontSize: 24,
+                      color: Color.fromRGBO(2, 62, 138, 1.0),
+                      fontWeight: FontWeight.bold
+                  ),)
                 ],
               ),
             ],

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-
 import '../MainMenu.dart';
 import '../ScoreText.dart';
-
 
 int currentMoves = 0;
 List<String> boardState = ['', '', '', '', '', '', '', '', '']; //empty board
@@ -12,7 +10,6 @@ int botScore = 0;
 int draw = 0;
 var _gamePageState;
 var _turnState;
-var _context;
 String _turn = 'O';
 bool loading = false;
 bool vsBot = true;
@@ -49,14 +46,8 @@ class _Board_1PlayerState extends State<Board_1Player> {
     }
     _gamePageState = this;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color.fromRGBO(202, 240, 248, 1.0),
-        elevation: 0,
-        iconTheme: IconThemeData(
-          color: Color.fromRGBO(2, 62, 138, 1.0),
-        ),
-      ),
       body: Container(
+        margin: EdgeInsets.only(top: 25),
           padding: EdgeInsets.all(10),
           color: Color.fromRGBO(202, 240, 248, 1.0),
           child: Column(
@@ -123,7 +114,6 @@ class _Board_1PlayerState extends State<Board_1Player> {
     );
   }
 }
-
 class BoardButton extends StatefulWidget {
   final int index;
 
@@ -205,7 +195,6 @@ class Status extends StatefulWidget {
   @override
   _StatusState createState() => _StatusState();
 }
-
 class _StatusState extends State<Status> {
   @override
   Widget build(BuildContext context) {
@@ -266,7 +255,8 @@ class _StatusState extends State<Status> {
                   ),
                   onPressed: () {
                     setState(() {
-                      Navigator.pushNamed(context, MainMenu.routeName);
+                      _resetGame();
+                      Navigator.pushReplacementNamed(context, MainMenu.routeName);
                     });
                   },
                   child: Text('New Game', style: TextStyle(
@@ -384,7 +374,6 @@ bool isMovesLeft(List<String> _board) {
   }
   return false;
 }
-
 int _eval(List<String> _board) {
   for (int i = 0; i < 9; i += 3) {
     if (_board[i] != '' &&
@@ -414,7 +403,6 @@ int minmax(List<String> _board, int depth, bool isMax) {
   int score = _eval(_board);
   int best = 0,
       i;
-
   if (score == 10 || score == -10) return score;
   if (!isMovesLeft(_board)) return 0;
   if (isMax) {
@@ -469,6 +457,5 @@ int _bestMove(List<String> _board) {
 
 class BoardArgs {
   String player1Name;
-
   BoardArgs({required this.player1Name});
 }
